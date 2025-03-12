@@ -7,23 +7,23 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
-import androidx.lifecycle.Observer
 import androidx.core.view.WindowInsetsCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import com.exampl.login_home.databinding.ActivityKabaddiBinding
+import com.exampl.login_home.R
+import com.exampl.login_home.ScoreViewModel
 
 class KabaddiActivity : AppCompatActivity() {
-
-    private lateinit var skorA: TextView
-    private lateinit var skorB: TextView
-
-    private lateinit var binding: ActivityKabaddiBinding
-    private val viewModel: ScoreViewModel by viewModels()
+    private lateinit var binding:ActivityKabaddiBinding
+    val viewModel: ScoreViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_kabaddi)
+        setContentView(R.layout.activity_kabaddi)
+        binding  = DataBindingUtil.setContentView(this, R.layout.activity_kabaddi)
         binding.lifecycleOwner = this
         binding.scoreViewModel = viewModel
 
@@ -33,32 +33,27 @@ class KabaddiActivity : AppCompatActivity() {
             insets
         }
 
-        viewModel.scoreA.observer(this, Observer { score ->
-            binding.skorA.text = score.toString()
+        viewModel.scoreA.observe(this, Observer{ scoreA ->
+            binding.skorA.text = scoreA.toString()
         })
 
-        viewModel.scoreB.observer(this, Observer { score ->
-            binding.skorB.text = score.toString()
+        viewModel.scoreB.observe(this, Observer{ scoreB ->
+            binding.skorB.text = scoreB.toString()
         })
 
-
-        // Deklasrasi + Inisialisasi
-        binding.buttonPlus1A.setOnClickListener { viewModel.incrementSkorA() }
-        binding.buttonPlus2A.setOnClickListener {
+        binding.tambah1a.setOnClickListener {viewModel.incrementSkorA()}
+        binding.tambah2a.setOnClickListener {
             viewModel.incrementSkorA()
             viewModel.incrementSkorA()
         }
-        binding.buttonPlus1B.setOnClickListener { viewModel.incrementSkorB() }
-        binding.buttonPlus2B.setOnClickListener {
+
+        binding.tambah1b.setOnClickListener {viewModel.incrementSkorB()}
+        binding.tambah2b.setOnClickListener {
             viewModel.incrementSkorB()
             viewModel.incrementSkorB()
         }
 
-        binding.btnreset.setOnClickListener {
-            resetSkor()
-            skorA.setValuea(0)
-            skorB.setValueb(0)
-        }
+        binding.btnreset.setOnClickListener {viewModel.resetSkor()}
 
     }
 }
