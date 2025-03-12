@@ -7,88 +7,58 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
+import androidx.lifecycle.Observer
 import androidx.core.view.WindowInsetsCompat
+import androidx.databinding.DataBindingUtil
+import com.exampl.login_home.databinding.ActivityKabaddiBinding
 
 class KabaddiActivity : AppCompatActivity() {
 
-    // Deklarasi + Inisialisasi
-//    var scoreA : Int = 0
-//    var scoreB : Int = 0
-
-    // Deklarasi pakai lateinit
     private lateinit var skorA: TextView
     private lateinit var skorB: TextView
 
-    //Menggunakan ViewModel (Deklarasi + Inisialisasi)
-    val viewModel: ScoreViewModel by viewModels()
+    private lateinit var binding: ActivityKabaddiBinding
+    private val viewModel: ScoreViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_kabaddi)
+
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_kabaddi)
+        binding.lifecycleOwner = this
+        binding.scoreViewModel = viewModel
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
+        viewModel.scoreA.observer(this, Observer { score ->
+            binding.skorA.text = score.toString()
+        })
+
+        viewModel.scoreB.observer(this, Observer { score ->
+            binding.skorB.text = score.toString()
+        })
+
+
         // Deklasrasi + Inisialisasi
-        val buttonPlus1A = findViewById<Button>(R.id.tambah1a)
-        val buttonPlus2A = findViewById<Button>(R.id.tambah2a)
-        val buttonPlus1B = findViewById<Button>(R.id.tambah1b)
-        val buttonPlus2B = findViewById<Button>(R.id.tambah2b)
-        val buttonReset = findViewById<Button>(R.id.btnreset)
-
-        // Inisialisasi
-        skorA = findViewById(R.id.skorA)
-        skorB = findViewById(R.id.skorB)
-
-        skorA.text = viewModel.scoreA.toString()
-        skorB.text = viewModel.scoreB.toString()
-
-        buttonPlus1A.setOnClickListener {
-            incrementSkorA()
+        binding.buttonPlus1A.setOnClickListener { viewModel.incrementSkorA() }
+        binding.buttonPlus2A.setOnClickListener {
+            viewModel.incrementSkorA()
+            viewModel.incrementSkorA()
+        }
+        binding.buttonPlus1B.setOnClickListener { viewModel.incrementSkorB() }
+        binding.buttonPlus2B.setOnClickListener {
+            viewModel.incrementSkorB()
+            viewModel.incrementSkorB()
         }
 
-        buttonPlus2A.setOnClickListener {
-            incrementSkorA()
-            incrementSkorA()
-        }
-
-        buttonPlus1B.setOnClickListener {
-            incrementSkorB()
-        }
-
-        buttonPlus2B.setOnClickListener {
-            incrementSkorB()
-            incrementSkorB()
-        }
-
-        buttonReset.setOnClickListener {
+        binding.btnreset.setOnClickListener {
             resetSkor()
+            skorA.setValuea(0)
+            skorB.setValueb(0)
         }
-
-    }
-
-    private fun resetSkor() {
-        viewModel.resetSkor()
-        skorA.text = viewModel.scoreA.toString()
-        skorB.text = viewModel.scoreB.toString()
-//        scoreA = 0
-//        scoreB = 0
-//        skorA.text = scoreA.toString()
-//        skorB.text = scoreB.toString()
-    }
-    fun incrementSkorA() {
-//        scoreA++
-        viewModel.incrementSkorA()
-        skorA.text = viewModel.scoreA.toString()
-    }
-
-    fun incrementSkorB() {
-//        scoreB++
-        viewModel.incrementSkorB()
-        skorB.text = viewModel.scoreB.toString()
 
     }
 }

@@ -1,19 +1,29 @@
 package com.exampl.login_home
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.MutableLiveData
 
 class ScoreViewModel:ViewModel() {
-    var scoreA : Int = 0
-    var scoreB : Int = 0
+    private val _scoreA = MutableLiveData(0)
+    val scoreA: LiveData<Int> = _scoreA
+
+    private val _scoreB = MutableLiveData(0)
+    val scoreB: LiveData<Int> = _scoreB
+
+
+//    var scoreA : Int = 0
+//    var scoreB : Int = 0
 
     fun incrementSkorA() {
-        scoreA++
+        _scoreA.value = (_scoreA.value ?: 0) + 1
     }
     fun incrementSkorB() {
-        scoreB++
+        _scoreB.value = (_scoreB.value ?: 0) + 1
     }
+
     fun resetSkor() {
-        scoreA = 0
-        scoreB = 0
+        _scoreA.value = 0
+        _scoreB.value = 0
     }
 
 }
